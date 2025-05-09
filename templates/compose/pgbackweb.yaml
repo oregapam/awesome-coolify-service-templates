@@ -1,0 +1,41 @@
+# documentation: https://github.com/eduardolat/pgbackweb
+# slogan: Effortless PostgreSQL backups with a user-friendly web interface!
+# tags: postgres,backup,restore,s3,selfhosted,productivity
+# port: 8085
+# author: @oregapam
+# repository: https://github.com/oregapam/awesome-coolify-service-templates
+
+services:
+  pgbackweb:
+    image: 'eduardolat/pgbackweb:latest'
+    volumes:
+      - './backups:/backups'
+    environment:
+      - SERVICE_FQDN_PGBACKWEB_8085
+      - 'PBW_ENCRYPTION_KEY=${SERVICE_BASE64_64_PGBACKWEB}'
+      - 'PBW_POSTGRES_CONN_STRING=postgresql://${SERVICE_USER_POSTGRES}:${SERVICE_PASSWORD_POSTGRES}@postgres:5432/${POSTGRES_DB}?sslmode=disable'
+      - TZ=UTC
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8085"]   # csak fejléceket kéri le
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+    depends_on:
+      postgres:
+        condition: service_healthy
+  postgres:
+    image: 'postgres:17'
+    environment:
+      - 'POSTGRES_USER=${SERVICE_USER_POSTGRES}'
+      - 'POSTGRES_DB=${POSTGRES_DB:-pgbackweb}'
+      - 'POSTGRES_PASSWORD=${SERVICE_PASSWORD_POSTGRES}'
+    volumes:
+      - './data:/var/lib/postgresql/data'
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - 'pg_isready -U postgres'
+      interval: 5s
+      timeout: 5s
+      retries: 5
