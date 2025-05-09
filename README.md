@@ -10,6 +10,8 @@ Here are the currently available service templates:
   [Link to .yaml](https://raw.githubusercontent.com/oregapam/awesome-coolify-service-templates/refs/heads/main/templates/compose/planka.yaml)
 - [Linkwarden](https://github.com/linkwarden/linkwarden) - Self-hosted collaborative bookmark manager to collect, organize, and preserve webpages, articles, and documents.
   [Link to .yaml](https://raw.githubusercontent.com/oregapam/awesome-coolify-service-templates/refs/heads/main/templates/compose/linkwarden.yaml)
+- [PG Back Web](https://github.com/eduardolat/pgbackweb) - 🐘 Effortless PostgreSQL backups with a user-friendly web interface! 🌐💾 
+  [Link to .yaml](https://raw.githubusercontent.com/oregapam/awesome-coolify-service-templates/refs/heads/main/templates/compose/pgbackweb.yaml)
 
 ## How to Use
 
