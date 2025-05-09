@@ -6,7 +6,7 @@ Welcome to my Coolify Service Templates repository! This repo contains Docker Co
 
 Here are the currently available service templates:
 
-- [Planka](https://github.com/oregapam/awesome-coolify-service-templates/blob/main/templates/compose/planka.yaml) - The realtime kanban board for workgroups built with React and Redux.
+- [Planka](https://raw.githubusercontent.com/oregapam/awesome-coolify-service-templates/refs/heads/main/templates/compose/planka.yaml) - The realtime kanban board for workgroups built with React and Redux.
 
 ## How to Use
 
