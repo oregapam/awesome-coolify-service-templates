@@ -14,14 +14,14 @@ Here are the currently available service templates:
 ## How to Use
 
 1. Click on chosen service's `Link to .yaml` link copy the `.yaml` file content.
-2. Open to your `Coolify dashboard`
+2. Open your `Coolify Dashboard` in browser
 3. Go to `Projects`
 4. Select or create a project
 5. Click on `+ Add New Resource`
 6. Choose `Docker Compose Empty`
 7. Paste the `.yaml` file content and click on `Save`
 8. If you need, update the configuration on the next screen at `Service Specific Configuration` section or at the `Environment Variables` sub-menu
-9. Set the domain in `Services` section
+9. (Optional) Edit the random generated domain in `Services` section
 10. Click on `Deploy` and enjoy :)
 
 ---
