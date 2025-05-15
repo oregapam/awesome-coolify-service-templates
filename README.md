@@ -12,6 +12,8 @@ Here are the currently available service templates:
   [Link to .yaml](https://raw.githubusercontent.com/oregapam/awesome-coolify-service-templates/refs/heads/main/templates/compose/linkwarden.yaml)
 - [PG Back Web](https://github.com/eduardolat/pgbackweb) - 🐘 Effortless PostgreSQL backups with a user-friendly web interface! 🌐💾 
   [Link to .yaml](https://raw.githubusercontent.com/oregapam/awesome-coolify-service-templates/refs/heads/main/templates/compose/pgbackweb.yaml)
+- [Crawl4AI](https://github.com/unclecode/crawl4ai) - 🚀🤖 Open-source LLM Friendly Web Crawler & Scraper. 
+  [Link to .yaml](https://raw.githubusercontent.com/oregapam/awesome-coolify-service-templates/refs/heads/main/templates/compose/crawl4ai.yaml)
 
 ## How to Use
 
