@@ -22,9 +22,6 @@ services:
       interval: 5s
       timeout: 20s
       retries: 10
-  
-  
-  
   linkwarden:
     environment:
       - SERVICE_FQDN_LINKWARDEN_3000
@@ -39,15 +36,6 @@ services:
     depends_on:
       - postgres
       - meilisearch
-  
-  
-  
-  
-  
-  
-  
-  
-  
   meilisearch:
     image: 'getmeili/meilisearch:v1.12.8'
     restart: always
