@@ -14,6 +14,9 @@ Here are the currently available service templates:
   [Link to .yaml](https://raw.githubusercontent.com/oregapam/awesome-coolify-service-templates/refs/heads/main/templates/compose/pgbackweb.yaml)
 - [Crawl4AI](https://github.com/unclecode/crawl4ai) - 🚀🤖 Open-source LLM Friendly Web Crawler & Scraper. 
   [Link to .yaml](https://raw.githubusercontent.com/oregapam/awesome-coolify-service-templates/refs/heads/main/templates/compose/crawl4ai.yaml)
+- [Docker Simple CORS Proxy](https://github.com/obeone/simple-cors-proxy) - Simple CORS proxy server for seamless cross-origin requests with TypingMind plugin. Easy setup. 
+  [Link to .yaml](https://raw.githubusercontent.com/oregapam/awesome-coolify-service-templates/refs/heads/main/templates/compose/corsproxy.yaml)
+
 
 ## How to Use
 

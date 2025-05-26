@@ -1,0 +1,22 @@
+# documentation: https://github.com/obeone/simple-cors-proxy
+# slogan: Simple CORS proxy server for seamless cross-origin requests with TypingMind plugin. Easy setup.
+# tags: web,api,proxy,cors
+# port: 8180
+# author: @oregapam
+# repository: https://github.com/oregapam/awesome-coolify-service-templates
+
+services:
+  corsproxy:
+    image: obeoneorg/simple-cors-proxy
+    container_name: api-proxy
+    restart: always
+    environment:
+      - PROXY_TOKEN=${SERVICE_BASE64_64_CORSPROXY} # Optional, comment this line to disable token authentication
+    ports:
+      - "8180:8080" # It is for non-SSL connections, you can remove this and setup an A name DNS record to point to your service FQDN, e.g. corsproxy.example.com
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"const http = require('http'); const req = http.request({host:'localhost',port:8080,path:'/proxy',method:'GET',timeout:5000}, (res) => { process.exitCode = (res.statusCode >= 200 && res.statusCode < 400 || res.statusCode === 500) ? 0 : 1; res.resume(); }); req.on('error', (err) => { process.exitCode = 1; }); req.on('timeout', () => { process.exitCode = 1; req.abort(); }); req.end();\""]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
