@@ -1,0 +1,50 @@
+# Ignore compiled files
+*.o
+*.ko
+*.obj
+*.so
+*.dll
+*.dylib
+
+# Ignore build directories
+build/
+dist/
+bin/
+
+# Ignore temporary files
+*~
+*.swp
+.DS_Store
+Thumbs.db
+
+# Ignore logs and databases
+*.log
+*.sql
+*.sqlite
+
+# Ignore dependency directories
+node_modules/
+vendor/
+
+# Ignore environment files
+.env
+.env.*
+
+# Ignore IDE and editor files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Ignore package manager files
+package-lock.json
+
+# Ignore test and coverage files
+coverage/
+.nyc_output/
+
+# Ignore specific files
+debug.log
+
+# Ignore non-public templates
+templates/compose/maxun.yaml
