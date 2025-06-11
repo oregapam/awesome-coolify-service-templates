@@ -1,0 +1,26 @@
+# documentation: https://pocket-id.org/docs/
+# slogan: A simple and easy-to-use OIDC provider that allows users to authenticate with their passkeys to your services.
+# tags: web,api,oidc,authentication,passkeys,sqlitedb
+# port: 1411
+# author: @oregapam
+# repository: https://github.com/oregapam/awesome-coolify-service-templates
+
+services:
+  pocketid:
+    image: ghcr.io/pocket-id/pocket-id
+    restart: unless-stopped
+    environment:
+      - SERVICE_FQDN_POCKETID_1411
+      - APP_URL=$SERVICE_FQDN_POCKETID
+      - TRUST_PROXY=${TRUST_PROXY:-true}
+      - MAXMIND_LICENSE_KEY=${MAXMIND_LICENSE_KEY}
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+    volumes:
+      - "./data:/app/data"
+    healthcheck:
+      test: "curl -f http://localhost:1411/healthz"
+      interval: 1m30s
+      timeout: 5s
+      retries: 2
+      start_period: 10s
