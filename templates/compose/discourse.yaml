@@ -1,0 +1,87 @@
+# documentation: https://meta.discourse.org/c/documentation/
+# slogan: A platform for community discussion. Free, open, simple.
+# tags: web,api,forum,community
+# port: 3000
+# author: @oregapam
+# repository: https://github.com/oregapam/awesome-coolify-service-templates
+
+services:
+  postgresql:
+    image: docker.io/bitnami/postgresql:16
+    volumes:
+      - 'postgresql_data:/bitnami/postgresql'
+    environment:
+      - POSTGRESQL_USERNAME=${SERVICE_USER_POSTGRESQL}
+      - POSTGRESQL_PASSWORD=${SERVICE_PASSWORD_POSTGRESQL}
+      - POSTGRESQL_DATABASE=${POSTGRES_DB:-discourse}
+  redis:
+    image: docker.io/bitnami/redis:latest
+    environment:
+      - REDIS_PASSWORD=${SERVICE_PASSWORD_REDIS}
+    volumes:
+      - 'redis_data:/bitnami/redis'
+  discourse:
+    image: docker.io/bitnami/discourse:3
+    volumes:
+      - 'discourse_data:/bitnami/discourse'
+    depends_on:
+      - postgresql
+      - redis
+    environment:
+      # FQDN and port configuration
+      - SERVICE_FQDN_DISCOURSE_3000
+      - DISCOURSE_HOST=${SERVICE_URL_DISCOURSE}
+      # PostgreSQL configuration
+      - DISCOURSE_DATABASE_HOST=postgresql
+      - DISCOURSE_POSTGRESQL_USERNAME=${SERVICE_USER_POSTGRESQL}
+      - DISCOURSE_POSTGRESQL_PASSWORD=${SERVICE_PASSWORD_POSTGRESQL}
+      - DISCOURSE_POSTGRESQL_NAME=${POSTGRES_DB}
+      - POSTGRESQL_CLIENT_POSTGRES_USER=${SERVICE_USER_POSTGRESQL}
+      - POSTGRESQL_CLIENT_POSTGRES_PASSWORD=${SERVICE_PASSWORD_POSTGRESQL}
+      - POSTGRESQL_CLIENT_CREATE_DATABASE_NAME=${POSTGRES_DB}
+      - 'POSTGRESQL_CLIENT_CREATE_DATABASE_EXTENSIONS=hstore,pg_trgm'
+      - BITNAMI_DEBUG=true
+      # Redis configuration
+      - DISCOURSE_REDIS_HOST=redis
+      - DISCOURSE_REDIS_PORT_NUMBER=6379
+      - DISCOURSE_REDIS_PASSWORD=${SERVICE_PASSWORD_REDIS}
+      # SMTP configuration
+      - DISCOURSE_SMTP_HOST=${SMTP_HOST:-in-v3.mailjet.com}
+      - DISCOURSE_SMTP_PORT=${SMTP_PORT:-587}
+      - DISCOURSE_SMTP_USER=${SMTP_USER:-YOUR_MAILJET_USER}
+      - DISCOURSE_SMTP_PASSWORD=${SMTP_PASSWORD:-YOUR_MAILJET_PASSWORD}
+      - DISCOURSE_SMTP_PROTOCOL=${SMTP_PROTOCOL:-tls}
+      - DISCOURSE_SMTP_AUTH=${SMTP_AUTH:-login}
+      # Discourse configuration
+      ## Admin user configuration
+      - DISCOURSE_USERNAME=${DISCOURSE_USERNAME:-admin}
+      - DISCOURSE_PASSWORD=${SERVICE_PASSWORD_DISCOURSE}
+      - DISCOURSE_EMAIL=${DISCOURSE_EMAIL:-noreply@yourdomain.com}
+      ## Site configuration
+      - DISCOURSE_SITENAME=${DISCOURSE_SITENAME:-Teszt}
+  sidekiq:
+    image: docker.io/bitnami/discourse:3
+    depends_on:
+      - discourse
+    volumes:
+      - 'sidekiq_data:/bitnami/discourse'
+    command: /opt/bitnami/scripts/discourse-sidekiq/run.sh
+    environment:
+      # FQDN and port configuration
+      - DISCOURSE_HOST=${SERVICE_URL_DISCOURSE}
+      # PostgreSQL configuration
+      - DISCOURSE_DATABASE_HOST=postgresql
+      - DISCOURSE_DATABASE_USER=${SERVICE_USER_POSTGRESQL}
+      - DISCOURSE_DATABASE_PASSWORD=${SERVICE_PASSWORD_POSTGRESQL}
+      - DISCOURSE_DATABASE_NAME=${POSTGRES_DB}
+      # Redis configuration
+      - DISCOURSE_REDIS_HOST=redis
+      - DISCOURSE_REDIS_PORT_NUMBER=6379
+      - DISCOURSE_REDIS_PASSWORD=${SERVICE_PASSWORD_REDIS}
+      # SMTP configuration
+      - DISCOURSE_SMTP_HOST=${SMTP_HOST}
+      - DISCOURSE_SMTP_PORT=${SMTP_PORT}
+      - DISCOURSE_SMTP_USER=${SMTP_USER}
+      - DISCOURSE_SMTP_PASSWORD=${SMTP_PASSWORD}
+      - DISCOURSE_SMTP_PROTOCOL=${SMTP_PROTOCOL}
+      - DISCOURSE_SMTP_AUTH=${SMTP_AUTH}
