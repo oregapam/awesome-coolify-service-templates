@@ -1,0 +1,6 @@
+[server]
+hostname = "mail.grandis.ovh"
+
+[certificate."default"]
+cert = "%{file:/data/certs/mail.grandis.ovh/cert.pem}%"
+private-key = "%{file:/data/certs/mail.grandis.ovh/key.pem}%"

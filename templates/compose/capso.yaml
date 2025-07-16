@@ -1,0 +1,43 @@
+name: capso
+services:
+  cap-web:
+    container_name: cap-web
+    image: ghcr.io/capsoftware/cap-web:latest
+    restart: unless-stopped
+    environment:
+      # Setup the URLs
+      - SERVICE_FQDN_CAPSO_3000
+      - WEB_URL=$SERVICE_FQDN_CAPSO
+      - NEXTAUTH_URL=$SERVICE_FQDN_CAPSO
+      # Setup the database connection
+      - 'DATABASE_URL=mysql://root:${SERVICE_PASSWORD_MYSQL}@ps-mysql:3306/${MYSQL_DATABASE}?ssl={"rejectUnauthorized":false}'
+      # Setup the encryption key
+      - DATABASE_ENCRYPTION_KEY=${SERVICE_BASE64_CAPSO}
+      - NEXTAUTH_SECRET=${SERVICE_BASE64_CAPSO}
+      # Setup the S3 storage
+      - CAP_AWS_ACCESS_KEY=${S3_ACCESS_KEY:-changeme}
+      - CAP_AWS_SECRET_KEY=${S3_SECRET_KEY:-changeme}
+      - CAP_AWS_BUCKET=${S3_BUCKET:-capso}
+      - CAP_AWS_REGION=${S3_REGION:-us-east-1}
+      - S3_PUBLIC_ENDPOINT=${S3_PUBLIC_ENDPOINT:-https://changeme.example.com}
+      - S3_INTERNAL_ENDPOINT=${S3_INTERNAL_ENDPOINT:-http://minio:9000}
+    depends_on:
+      - ps-mysql
+
+  ps-mysql:
+    container_name: cap-primary-db
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_PASSWORD=${SERVICE_PASSWORD_MYSQL}
+      - MYSQL_DATABASE=${MYSQL_DATABASE:-planetscale}
+      - MYSQL_ROOT_HOST=${MYSQL_ROOT_HOST:-%}
+    command:
+      [
+        "--max_connections=1000",
+        "--host-cache-size=0"
+      ]
+    volumes:
+      - ./ps-mysql:/var/lib/mysql
+volumes:
+  ps-mysql:

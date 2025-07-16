@@ -1,0 +1,10 @@
+services:
+  oidctestclient:
+    image: ghcr.io/beryju/oidc-test-client:latest
+    restart: always
+    environment:
+    - SERVICE_FQDN_OIDCTESTCLIENT_9009
+    - OIDC_ROOT_URL=$SERVICE_FQDN_OIDCTESTCLIENT
+    - OIDC_CLIENT_ID=${CLIENT_ID:-test-id}
+    - OIDC_CLIENT_SECRET=${CLIENT_SECRET:-test-secret}
+    - OIDC_PROVIDER=${OIDC_PROVIDER:-https://some.issuer.tld/}
