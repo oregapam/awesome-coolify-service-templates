@@ -21,6 +21,8 @@ Here are the currently available service templates:
   [Link to .yaml (SQLite version)](https://raw.githubusercontent.com/oregapam/awesome-coolify-service-templates/refs/heads/main/templates/compose/pocketid-sqlite.yaml)
 - [Discourse](https://github.com/discourse/discourse) - A platform for community discussion. Free, open, simple. 
   [Link to .yaml](https://raw.githubusercontent.com/oregapam/awesome-coolify-service-templates/refs/heads/main/templates/compose/discourse.yaml)
+- [Vaultwarden (Postgres)](https://github.com/dani-garcia/vaultwarden) - Unofficial Bitwarden compatible server written in Rust, formerly known as bitwarden_rs.
+  [Link to .yaml](https://raw.githubusercontent.com/oregapam/awesome-coolify-service-templates/refs/heads/main/templates/compose/vaultwarden-pg.yaml)
 
 
 ## How to Use

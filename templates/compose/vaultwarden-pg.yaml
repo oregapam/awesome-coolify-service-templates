@@ -1,0 +1,51 @@
+# documentation: https://github.com/dani-garcia/vaultwarden
+# slogan: Unofficial Bitwarden compatible server written in Rust, formerly known as bitwarden_rs
+# tags: vaultwarden,bitwarden,password-manager
+# port: 80
+# author: @oregapam
+# repository: https://github.com/oregapam/awesome-coolify-service-templates
+
+services:
+  vaultwarden:
+    image: 'vaultwarden/server:latest'
+    restart: always
+    environment:
+      - SERVICE_FQDN_VAULTWARDEN
+      - 'DOMAIN=${SERVICE_FQDN_VAULTWARDEN}'
+      - 'DATABASE_URL=postgresql://${SERVICE_USER_POSTGRES}:${SERVICE_PASSWORD_POSTGRES}@postgres:5432/${POSTGRES_DB}'
+      - 'SIGNUPS_ALLOWED=${SIGNUP_ALLOWED:-true}'
+      - 'ADMIN_TOKEN=${SERVICE_PASSWORD_64_ADMIN}'
+      - IP_HEADER=X-Forwarded-For
+      - 'PUSH_ENABLED=${PUSH_ENABLED:-false}'
+      - 'PUSH_INSTALLATION_ID=${PUSH_SERVICE_ID}'
+      - 'PUSH_INSTALLATION_KEY=${PUSH_SERVICE_KEY}'
+    volumes:
+      - './vaultwarden-data:/data'
+    healthcheck:
+      test:
+        - CMD
+        - curl
+        - '-f'
+        - 'http://127.0.0.1:80'
+      interval: 2s
+      timeout: 10s
+      retries: 15
+    depends_on:
+      postgres:
+        condition: service_healthy
+  postgres:
+    image: postgres:17
+    restart: always
+    volumes:
+      - "/db-data:/var/lib/postgresql/data"
+    environment:
+      - 'POSTGRES_USER=${SERVICE_USER_POSTGRES}'
+      - 'POSTGRES_PASSWORD=${SERVICE_PASSWORD_POSTGRES}'
+      - 'POSTGRES_DB=${POSTGRES_DB:-vaultwarden}'
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - 'pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}'
+      interval: 5s
+      timeout: 20s
+      retries: 10
