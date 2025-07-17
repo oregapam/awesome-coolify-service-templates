@@ -1,0 +1,98 @@
+# documentation: https://docs.maxun.dev/
+# slogan: Open Source No Code Web Data Extraction Platform • Turn Websites To APIs & Spreadsheets With No-Code Robots In Minutes
+# tags: scrape,web,api,automation,productivity
+# port: 5173
+# author: @oregapam
+# repository: https://github.com/oregapam/awesome-coolify-service-templates
+
+services:
+  postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: ${SERVICE_USER_POSTGRES}
+      POSTGRES_PASSWORD: ${SERVICE_PASSWORD_POSTGRES}
+      POSTGRES_DB: ${POSTGRES_DB:-maxun}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - 'pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}'
+      interval: 5s
+      timeout: 20s
+      retries: 10
+
+  minio:
+    image: minio/minio
+    environment:
+      MINIO_ROOT_USER: ${SERVICE_USER_MINIO}
+      MINIO_ROOT_PASSWORD: ${SERVICE_PASSWORD_MINIO}
+    command: server /data --console-address :${MINIO_CONSOLE_PORT:-9001}
+    volumes:
+      - minio_data:/data
+
+  backend:
+    image: getmaxun/maxun-backend:latest
+    #env_file: .env
+    environment:
+      - SERVICE_FQDN_BACKEND_8080
+      - MINIO_ENDPOINT=minio
+      - MINIO_PORT=${MINIO_PORT:-9000}
+      - MINIO_CONSOLE_PORT=${MINIO_CONSOLE_PORT:-9001}
+      - MINIO_ACCESS_KEY=${SERVICE_USER_MINIO}
+      - MINIO_SECRET_KEY=${SERVICE_PASSWORD_MINIO}
+      - JWT_SECRET=${SERVICE_BASE64_64_JWT}
+      - ENCRYPTION_KEY=${SERVICE_BASE64_64_ENCRYPTION}
+      - SESSION_SECRET=${SERVICE_PASSWORD_SESSION}
+      - NODE_ENV=${NODE_ENV:-production}
+      - DB_NAME=${POSTGRES_DB:-maxun}
+      - DB_USER=${SERVICE_USER_POSTGRES}
+      - DB_PASSWORD=${SERVICE_PASSWORD_POSTGRES}
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - PUBLIC_URL=$SERVICE_FQDN_FRONTEND
+      - BACKEND_URL=$SERVICE_FQDN_BACKEND
+      - VITE_BACKEND_URL=$SERVICE_FQDN_BACKEND
+      - VITE_PUBLIC_URL=$SERVICE_FQDN_FRONTEND
+      - PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
+      - PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=0
+      - CHROMIUM_FLAGS='--disable-gpu --no-sandbox --headless=new'
+    security_opt:
+    - seccomp=unconfined  # This might help with browser sandbox issues
+    shm_size: '8gb' # Increase shared memory size for Chromium
+    mem_limit: 8g   # Set a 8GB memory limit
+    depends_on:
+      - postgres
+      - minio
+    volumes:
+      - /var/run/dbus:/var/run/dbus
+
+  frontend:
+    image: getmaxun/maxun-frontend:latest
+    #env_file: .env
+    environment:
+      - SERVICE_FQDN_FRONTEND_5173
+      - MINIO_ENDPOINT=minio
+      - MINIO_PORT=${MINIO_PORT:-9000}
+      - MINIO_CONSOLE_PORT=${MINIO_CONSOLE_PORT:-9001}
+      - MINIO_ACCESS_KEY=${SERVICE_USER_MINIO}
+      - MINIO_SECRET_KEY=${SERVICE_PASSWORD_MINIO}
+      - JWT_SECRET=${SERVICE_BASE64_64_JWT}
+      - ENCRYPTION_KEY=${SERVICE_BASE64_64_ENCRYPTION}
+      - SESSION_SECRET=${SERVICE_PASSWORD_SESSION}
+      - NODE_ENV=${NODE_ENV:-production}
+      - DB_NAME=${POSTGRES_DB:-maxun}
+      - DB_USER=${SERVICE_USER_POSTGRES}
+      - DB_PASSWORD=${SERVICE_PASSWORD_POSTGRES}
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - PUBLIC_URL=$SERVICE_FQDN_FRONTEND
+      - BACKEND_URL=$SERVICE_FQDN_BACKEND
+      - VITE_BACKEND_URL=$SERVICE_FQDN_BACKEND
+      - VITE_PUBLIC_URL=$SERVICE_FQDN_FRONTEND
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
+  minio_data:

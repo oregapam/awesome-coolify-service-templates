@@ -45,6 +45,3 @@ coverage/
 
 # Ignore specific files
 debug.log
-
-# Ignore non-public templates
-templates/compose/maxun.yaml
