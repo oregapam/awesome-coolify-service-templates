@@ -8,6 +8,7 @@
 services:
   postgresql:
     image: docker.io/bitnami/postgresql:16
+    restart: always
     volumes:
       - 'postgresql_data:/bitnami/postgresql'
     environment:
@@ -16,12 +17,14 @@ services:
       - POSTGRESQL_DATABASE=${POSTGRES_DB:-discourse}
   redis:
     image: docker.io/bitnami/redis:latest
+    restart: always
     environment:
       - REDIS_PASSWORD=${SERVICE_PASSWORD_REDIS}
     volumes:
       - 'redis_data:/bitnami/redis'
   discourse:
     image: docker.io/bitnami/discourse:3
+    restart: always
     volumes:
       - 'discourse_data:/bitnami/discourse'
     depends_on:
@@ -61,6 +64,7 @@ services:
       - DISCOURSE_SITENAME=${DISCOURSE_SITENAME:-Teszt}
   sidekiq:
     image: docker.io/bitnami/discourse:3
+    restart: always
     depends_on:
       - discourse
     volumes:
