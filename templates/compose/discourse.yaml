@@ -26,7 +26,7 @@ services:
     image: docker.io/bitnami/discourse:3
     restart: always
     volumes:
-      - 'discourse_data:/bitnami/discourse'
+      - './discourse_data:/bitnami/discourse'
     depends_on:
       - postgresql
       - redis
@@ -68,7 +68,7 @@ services:
     depends_on:
       - discourse
     volumes:
-      - 'sidekiq_data:/bitnami/discourse'
+      - './sidekiq_data:/bitnami/discourse'
     command: /opt/bitnami/scripts/discourse-sidekiq/run.sh
     environment:
       # FQDN and port configuration
