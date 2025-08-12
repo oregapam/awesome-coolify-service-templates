@@ -9,6 +9,7 @@ services:
   lightrag:
     container_name: lightrag
     image: ghcr.io/hkuds/lightrag:latest
+    restart: always
     env_file:
       - .env
     environment:
@@ -53,7 +54,6 @@ services:
       - EMBEDDING_BATCH_NUM=${EMBEDDING_BATCH_NUM:-100}
       # Workspace Configuration
       - WORKSPACE=${SERVICE_USER_WORKSPACE}
-    restart: unless-stopped
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
@@ -67,4 +67,4 @@ services:
         - bash -c ':> /dev/tcp/127.0.0.1/9621' || exit 1
       interval: 5s
       timeout: 5s
-      retries: 3
+      retries: 5
