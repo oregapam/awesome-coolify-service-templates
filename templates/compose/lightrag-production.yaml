@@ -71,6 +71,7 @@ services:
       - FORCE_LLM_SUMMARY_ON_MERGE=${FORCE_LLM_SUMMARY_ON_MERGE:-4}
       - MAX_TOKENS=${MAX_TOKENS:-10000}
       - MAX_GLEANING=${MAX_GLEANING:-1}
+      - MAX_GRAPH_NODES=${MAX_GRAPH_NODES:-1000}
       # Embedder Configuration
       - EMBEDDING_BINDING=${EMBEDDING_BINDING:-openai}
       - EMBEDDING_MODEL=${EMBEDDING_MODEL:-text-embedding-3-small}
