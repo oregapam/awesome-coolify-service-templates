@@ -6,6 +6,18 @@
 # repository: https://github.com/oregapam/awesome-coolify-service-templates
 
 services:
+  redis:
+    image: redis:8
+    volumes:
+      - ./lightrag_redis_data:/data
+    healthcheck:
+      test:
+        - CMD
+        - redis-cli
+        - PING
+      interval: 5s
+      timeout: 10s
+      retries: 20
   qdrant:
     image: "qdrant/qdrant:latest"
     environment:
@@ -32,19 +44,7 @@ services:
         - bash -c ':> /dev/tcp/127.0.0.1/7687' || exit 1
       interval: 5s
       timeout: 5s
-      retries: 3
-  redis:
-    image: redis:8
-    volumes:
-      - ./lightrag_redis_data:/data
-    healthcheck:
-      test:
-        - CMD
-        - redis-cli
-        - PING
-      interval: 5s
-      timeout: 10s
-      retries: 20
+      retries: 3  
   lightrag:
     container_name: lightrag
     image: ghcr.io/hkuds/lightrag:latest
@@ -119,9 +119,9 @@ services:
       - ./data/tiktoken:/app/data/tiktoken
       - ./config.ini:/app/config.ini
     depends_on:
+      - redis
       - qdrant
       - memgraph
-      - redis
     healthcheck:
       test:
         - CMD-SHELL
