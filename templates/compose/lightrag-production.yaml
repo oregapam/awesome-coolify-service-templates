@@ -8,6 +8,7 @@
 services:
   redis:
     image: redis:8
+    restart: always
     volumes:
       - ./lightrag_redis_data:/data
     healthcheck:
@@ -20,6 +21,7 @@ services:
       retries: 20
   qdrant:
     image: "qdrant/qdrant:latest"
+    restart: always
     environment:
       - QDRANT__SERVICE__API_KEY=${SERVICE_PASSWORD_QDRANTAPIKEY}
     volumes:
@@ -30,9 +32,10 @@ services:
         - bash -c ':> /dev/tcp/127.0.0.1/6333' || exit 1
       interval: 5s
       timeout: 5s
-      retries: 3
+      retries: 10
   memgraph:
     image: memgraph/memgraph-mage:latest
+    restart: always
     container_name: memgraph-mage
     command: ["--log-level=TRACE"]
     environment:
@@ -44,12 +47,11 @@ services:
         - bash -c ':> /dev/tcp/127.0.0.1/7687' || exit 1
       interval: 5s
       timeout: 5s
-      retries: 3  
+      retries: 15
   lightrag:
     container_name: lightrag
     image: ghcr.io/hkuds/lightrag:latest
-    env_file:
-      - .env
+    restart: always
     environment:
       # Default host parameters
       - SERVICE_FQDN_LIGHTRAG_9621
@@ -110,7 +112,6 @@ services:
       - MEMGRAPH_USERNAME=${SERVICE_USER_MEMGRAPH}
       - MEMGRAPH_PASSWORD=${SERVICE_PASSWORD_MEMGRAPH}
       - MEMGRAPH_DATABASE=memgraph
-    restart: unless-stopped
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
@@ -119,13 +120,16 @@ services:
       - ./data/tiktoken:/app/data/tiktoken
       - ./config.ini:/app/config.ini
     depends_on:
-      - redis
-      - qdrant
-      - memgraph
+      redis:
+        condition: service_healthy
+      qdrant:
+        condition: service_healthy
+      memgraph:
+        condition: service_healthy
     healthcheck:
       test:
         - CMD-SHELL
         - bash -c ':> /dev/tcp/127.0.0.1/9621' || exit 1
       interval: 5s
       timeout: 5s
-      retries: 3
+      retries: 10
