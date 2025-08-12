@@ -1,0 +1,131 @@
+# documentation: https://github.com/HKUDS/LightRAG
+# slogan: Simple and Fast Retrieval-Augmented Generation
+# tags: RAG, lightrag,production,ai,graphrag
+# port: 9621
+# author: @oregapam
+# repository: https://github.com/oregapam/awesome-coolify-service-templates
+
+services:
+  qdrant:
+    image: "qdrant/qdrant:latest"
+    environment:
+      - QDRANT__SERVICE__API_KEY=${SERVICE_PASSWORD_QDRANTAPIKEY}
+    volumes:
+      - "./qdrant-storage:/qdrant/storage"
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - bash -c ':> /dev/tcp/127.0.0.1/6333' || exit 1
+      interval: 5s
+      timeout: 5s
+      retries: 3
+  memgraph:
+    image: memgraph/memgraph-mage:latest
+    container_name: memgraph-mage
+    command: ["--log-level=TRACE"]
+    environment:
+      - MEMGRAPH_USER=${SERVICE_USER_MEMGRAPH}
+      - MEMGRAPH_PASSWORD=${SERVICE_PASSWORD_MEMGRAPH}
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - bash -c ':> /dev/tcp/127.0.0.1/7687' || exit 1
+      interval: 5s
+      timeout: 5s
+      retries: 3
+  redis:
+    image: redis:8
+    volumes:
+      - ./lightrag_redis_data:/data
+    healthcheck:
+      test:
+        - CMD
+        - redis-cli
+        - PING
+      interval: 5s
+      timeout: 10s
+      retries: 20
+  lightrag:
+    container_name: lightrag
+    image: ghcr.io/hkuds/lightrag:latest
+    env_file:
+      - .env
+    environment:
+      # Default host parameters
+      - SERVICE_FQDN_LIGHTRAG_9621
+      - HOST=0.0.0.0
+      - PORT=9621
+      - LIGHTRAG_API_KEY=${SERVICE_BASE64_API}
+      - 'AUTH_ACCOUNTS=${SERVICE_USER_ADMIN}:${SERVICE_PASSWORD_ADMIN}'
+      - TIKTOKEN_CACHE_DIR=/app/data/tiktoken
+      # Branding
+      - WEBUI_TITLE=${WEBUI_TITLE:-My RAG}
+      - WEBUI_DESCRIPTION=${WEBUI_DESCRIPTION:-Simple and Fast Graph Based RAG System}
+      # Document processing configuration
+      - SUMMARY_LANGUAGE=${SUMMARY_LANGUAGE:-English}
+      - ENABLE_LLM_CACHE_FOR_EXTRACT=${ENABLE_LLM_CACHE_FOR_EXTRACT:-true}
+      - CHUNK_SIZE=${CHUNK_SIZE:-1200}
+      - CHUNK_OVERLAP_SIZE=${CHUNK_OVERLAP_SIZE:-100}
+      - FORCE_LLM_SUMMARY_ON_MERGE=${FORCE_LLM_SUMMARY_ON_MERGE:-4}
+      - MAX_TOKENS=${MAX_TOKENS:-10000}
+      - MAX_GLEANING=${MAX_GLEANING:-1}
+      # Embedder Configuration
+      - EMBEDDING_BINDING=${EMBEDDING_BINDING:-openai}
+      - EMBEDDING_MODEL=${EMBEDDING_MODEL:-text-embedding-3-small}
+      - EMBEDDING_DIM=${EMBEDDING_DIM:-1536}
+      - EMBEDDING_BINDING_HOST=${EMBEDDING_BINDING_HOST:-https://api.openai.com/v1}
+      - EMBEDDING_BINDING_API_KEY=${EMBEDDING_BINDING_API_KEY:?}
+      # LLM Configuration
+      - LLM_BINDING=${LLM_BINDING:-openai}
+      - LLM_MODEL=${LLM_MODEL:-gpt-4.1-nano}
+      - LLM_BINDING_HOST=${LLM_BINDING_HOST:-https://api.openai.com/v1}
+      - LLM_BINDING_API_KEY=${LLM_BINDING_API_KEY:?}
+      # Reranker Configuration
+      - MIN_RERANK_SCORE=${MIN_RERANK_SCORE:-0.0}
+      - RERANK_MODEL=${RERANK_MODEL:-jina-reranker-v2-base-multilingual}
+      - RERANK_BINDING_HOST=${RERANK_BINDING_HOST:-https://api.jina.ai/v1/rerank}
+      - RERANK_BINDING_API_KEY=${RERANK_BINDING_API_KEY}
+      # Concurrency Configuration
+      - MAX_ASYNC=${MAX_ASYNC:-12}
+      - MAX_PARALLEL_INSERT=${MAX_PARALLEL_INSERT:-3}
+      - EMBEDDING_FUNC_MAX_ASYNC=${EMBEDDING_FUNC_MAX_ASYNC:-24}
+      - EMBEDDING_BATCH_NUM=${EMBEDDING_BATCH_NUM:-100}
+      # Workspace Configuration
+      - WORKSPACE=${SERVICE_USER_WORKSPACE}
+      # Vector Storage Configuration (Qdrant)
+      - LIGHTRAG_VECTOR_STORAGE=QdrantVectorDBStorage
+      - QDRANT_URL=http://qdrant:6333
+      - QDRANT_API_KEY=${SERVICE_PASSWORD_QDRANTAPIKEY}
+      # KV & DOC Status Storage Configuration (Redis)
+      - LIGHTRAG_KV_STORAGE=RedisKVStorage
+      - LIGHTRAG_DOC_STATUS_STORAGE=RedisDocStatusStorage
+      - REDIS_URI=redis://redis:6379
+      - REDIS_SOCKET_TIMEOUT=30
+      - REDIS_CONNECT_TIMEOUT=10
+      - REDIS_MAX_CONNECTIONS=100
+      - REDIS_RETRY_ATTEMPTS=3
+      # Graph Storage Configuration (Memgraph)
+      - LIGHTRAG_GRAPH_STORAGE=MemgraphStorage
+      - MEMGRAPH_URI=bolt://memgraph:7687
+      - MEMGRAPH_USERNAME=${SERVICE_USER_MEMGRAPH}
+      - MEMGRAPH_PASSWORD=${SERVICE_PASSWORD_MEMGRAPH}
+      - MEMGRAPH_DATABASE=memgraph
+    restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./data/rag_storage:/app/data/rag_storage
+      - ./data/inputs:/app/data/inputs
+      - ./data/tiktoken:/app/data/tiktoken
+      - ./config.ini:/app/config.ini
+    depends_on:
+      - qdrant
+      - memgraph
+      - redis
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - bash -c ':> /dev/tcp/127.0.0.1/9621' || exit 1
+      interval: 5s
+      timeout: 5s
+      retries: 3
