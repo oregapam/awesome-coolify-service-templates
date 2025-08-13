@@ -58,10 +58,9 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
-      - ./data/rag_storage:/app/data/rag_storage
-      - ./data/inputs:/app/data/inputs
-      - ./data/tiktoken:/app/data/tiktoken
-      - ./config.ini:/app/config.ini
+      - lightrag_rag_storage:/app/data/rag_storage
+      - lightrag_inputs:/app/data/inputs
+      - lightrag_tiktoken:/app/data/tiktoken
     healthcheck:
       test:
         - CMD-SHELL
@@ -69,3 +68,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+volumes:
+  lightrag_rag_storage:
+  lightrag_inputs:
+  lightrag_tiktoken:
