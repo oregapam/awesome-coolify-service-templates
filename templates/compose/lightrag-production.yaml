@@ -36,6 +36,9 @@ services:
   memgraph:
     image: memgraph/memgraph-mage:latest
     restart: always
+    volumes:
+      - mg_lib:/var/lib/memgraph
+      - mg_log:/var/log/memgraph
     container_name: memgraph-mage
     command: ["--log-level=TRACE"]
     environment:
@@ -134,3 +137,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+volumes:
+  mg_lib:
+  mg_log:
+  mg_etc:
