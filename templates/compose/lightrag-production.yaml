@@ -60,6 +60,7 @@ services:
       - SERVICE_FQDN_LIGHTRAG_9621
       - HOST=0.0.0.0
       - PORT=9621
+      - WORKERS=1
       - LIGHTRAG_API_KEY=${SERVICE_BASE64_API}
       - 'AUTH_ACCOUNTS=${SERVICE_USER_ADMIN}:${SERVICE_PASSWORD_ADMIN}'
       - TIKTOKEN_CACHE_DIR=/app/data/tiktoken
@@ -120,8 +121,13 @@ services:
       - "host.docker.internal:host-gateway"
     volumes:
       - lightrag_rag_storage:/app/data/rag_storage
-      - lightrag_inputs:/app/data/inputs
       - lightrag_tiktoken:/app/data/tiktoken
+      - ./uploads:/app/data/inputs
+      - type: bind
+        source: ./.env
+        target: /app/.env
+        content: |
+          WORKERS=1
     depends_on:
       redis:
         condition: service_healthy
@@ -143,5 +149,4 @@ volumes:
   mg_log:
   mg_etc:
   lightrag_rag_storage:
-  lightrag_inputs:
   lightrag_tiktoken:
