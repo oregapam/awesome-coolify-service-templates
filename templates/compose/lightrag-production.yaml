@@ -10,7 +10,7 @@ services:
     image: redis:8
     restart: always
     volumes:
-      - ./lightrag_redis_data:/data
+      - redis_data:/data
     healthcheck:
       test:
         - CMD
@@ -20,12 +20,12 @@ services:
       timeout: 10s
       retries: 20
   qdrant:
-    image: "qdrant/qdrant:latest"
+    image: qdrant/qdrant:latest
     restart: always
     environment:
       - QDRANT__SERVICE__API_KEY=${SERVICE_PASSWORD_QDRANTAPIKEY}
     volumes:
-      - "./qdrant-storage:/qdrant/storage"
+      - qdrant-data:/qdrant/storage
     healthcheck:
       test:
         - CMD-SHELL
@@ -119,10 +119,9 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
-      - ./data/rag_storage:/app/data/rag_storage
-      - ./data/inputs:/app/data/inputs
-      - ./data/tiktoken:/app/data/tiktoken
-      - ./config.ini:/app/config.ini
+      - lightrag_rag_storage:/app/data/rag_storage
+      - lightrag_inputs:/app/data/inputs
+      - lightrag_tiktoken:/app/data/tiktoken
     depends_on:
       redis:
         condition: service_healthy
@@ -138,6 +137,11 @@ services:
       timeout: 5s
       retries: 10
 volumes:
+  redis_data:
+  qdrant-data:
   mg_lib:
   mg_log:
   mg_etc:
+  lightrag_rag_storage:
+  lightrag_inputs:
+  lightrag_tiktoken:
