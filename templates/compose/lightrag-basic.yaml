@@ -10,8 +10,6 @@ services:
     container_name: lightrag
     image: ghcr.io/hkuds/lightrag:latest
     restart: always
-    env_file:
-      - .env
     environment:
       # Default host parameters
       - SERVICE_FQDN_LIGHTRAG_9621
