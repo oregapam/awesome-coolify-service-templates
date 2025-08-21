@@ -1,0 +1,57 @@
+# documentation: https://autobase.tech/docs
+# slogan: Automated database platform for PostgreSQL® - Your own DBaaS.
+# tags: database,postgresql,dbaas
+# port: 80
+# author: @oregapam
+# repository: https://github.com/oregapam/awesome-coolify-service-templates
+
+services:
+  autobase-console-api:
+    image: autobase/console_api:latest
+    container_name: autobase-console-api
+    healthcheck:
+      test: ["CMD", "curl", "-fsS",
+            "-H", "accept: application/json",
+            "-H", "Authorization: Bearer ${SERVICE_PASSWORD_TOKEN}",
+            "http://localhost:8080/api/v1/version"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /tmp/ansible:/tmp/ansible
+    environment:
+      - PG_CONSOLE_AUTHORIZATION_TOKEN=${SERVICE_PASSWORD_TOKEN}
+      - PG_CONSOLE_LOGGER_LEVEL=${PG_CONSOLE_LOGGER_LEVEL:-INFO}
+      - PG_CONSOLE_DB_HOST=autobase-console-db
+
+  autobase-console-ui:
+    image: autobase/console_ui:latest
+    container_name: autobase-console-ui
+    healthcheck:
+      test: [ "CMD", "curl", "http://localhost:80/" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    environment:
+      - SERVICE_FQDN_AUTOBASEUI_80
+      - PG_CONSOLE_AUTHORIZATION_TOKEN=${SERVICE_PASSWORD_TOKEN}
+      - PG_CONSOLE_API_HOST=autobase-console-api
+
+  autobase-console-db:
+    image: autobase/console_db:latest
+    container_name: autobase-console-db
+    healthcheck:
+      test: pg_isready -U postgres -h 127.0.0.1
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+    volumes:
+      - console_postgres:/var/lib/postgresql
+
+volumes:
+  console_postgres:
+    name: console_postgres

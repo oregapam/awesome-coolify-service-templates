@@ -28,6 +28,8 @@ Here are the currently available service templates:
 - [LightRAG](https://github.com/HKUDS/LightRAG) - Simple and Fast Retrieval-Augmented Generation 
   [Link to .yaml (Basic version)](https://raw.githubusercontent.com/oregapam/awesome-coolify-service-templates/refs/heads/main/templates/compose/lightrag-basic.yaml)
   [Link to .yaml (Production version - with Redis, Qdrant and Memgraph)](https://raw.githubusercontent.com/oregapam/awesome-coolify-service-templates/refs/heads/main/templates/compose/lightrag-production.yaml)
+- [autobase](https://github.com/vitabaks/autobase) - Automated database platform for PostgreSQL® - Your own DBaaS.
+  [Link to .yaml](https://raw.githubusercontent.com/oregapam/awesome-coolify-service-templates/refs/heads/main/templates/compose/autobase.yaml)
 
 
 ## How to Use
