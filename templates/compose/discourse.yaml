@@ -50,7 +50,7 @@ services:
     environment:
       # FQDN and port configuration
       - SERVICE_FQDN_DISCOURSE_3000
-      - DISCOURSE_HOST=${SERVICE_URL_DISCOURSE}
+      - DISCOURSE_HOST=${DISCOURSE_HOST:?}
       # PostgreSQL configuration
       - DISCOURSE_DATABASE_HOST=postgresql
       - DISCOURSE_POSTGRESQL_USERNAME=${POSTGRES_USER}
@@ -89,7 +89,7 @@ services:
     command: /opt/bitnami/scripts/discourse-sidekiq/run.sh
     environment:
       # FQDN and port configuration
-      - DISCOURSE_HOST=${SERVICE_URL_DISCOURSE}
+      - DISCOURSE_HOST=${DISCOURSE_HOST:?}
       # PostgreSQL configuration
       - DISCOURSE_DATABASE_HOST=postgresql
       - DISCOURSE_DATABASE_USER=${POSTGRES_USER}
