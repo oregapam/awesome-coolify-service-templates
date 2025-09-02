@@ -7,7 +7,7 @@
 
 services:
   postgresql:
-    image: docker.io/bitnami/postgresql:16
+    image: docker.io/bitnami/postgresql:latest
     restart: always
     volumes:
       - 'postgresql_data:/bitnami/postgresql'
