@@ -15,6 +15,13 @@ services:
       - POSTGRESQL_USERNAME=${SERVICE_USER_POSTGRESQL}
       - POSTGRESQL_PASSWORD=${SERVICE_PASSWORD_POSTGRESQL}
       - POSTGRESQL_DATABASE=${POSTGRES_DB:-discourse}
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - 'pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}'
+      interval: 5s
+      timeout: 20s
+      retries: 10
   redis:
     image: docker.io/bitnami/redis:latest
     restart: always
@@ -22,14 +29,24 @@ services:
       - REDIS_PASSWORD=${SERVICE_PASSWORD_REDIS}
     volumes:
       - 'redis_data:/bitnami/redis'
+    healthcheck:
+      test:
+        - CMD
+        - redis-cli
+        - PING
+      interval: 5s
+      timeout: 10s
+      retries: 20
   discourse:
     image: docker.io/bitnami/discourse:3
     restart: always
     volumes:
       - 'discourse_data:/bitnami/discourse'
     depends_on:
-      - postgresql
-      - redis
+      postgresql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     environment:
       # FQDN and port configuration
       - SERVICE_FQDN_DISCOURSE_3000
@@ -66,7 +83,8 @@ services:
     image: docker.io/bitnami/discourse:3
     restart: always
     depends_on:
-      - discourse
+      discourse:
+        condition: service_healthy
     volumes:
       - 'sidekiq_data:/bitnami/discourse'
     command: /opt/bitnami/scripts/discourse-sidekiq/run.sh
