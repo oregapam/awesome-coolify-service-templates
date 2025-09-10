@@ -30,11 +30,14 @@ Here are the currently available service templates:
   [Link to .yaml (Production version - with Redis, Qdrant and Memgraph)](https://raw.githubusercontent.com/oregapam/awesome-coolify-service-templates/refs/heads/main/templates/compose/lightrag-production.yaml)
 - [autobase](https://github.com/vitabaks/autobase) - Automated database platform for PostgreSQL® - Your own DBaaS.
   [Link to .yaml](https://raw.githubusercontent.com/oregapam/awesome-coolify-service-templates/refs/heads/main/templates/compose/autobase.yaml)
+- [pgAdmin 4](https://github.com/pgadmin-org/pgadmin4) - pgAdmin is the most popular and feature rich Open Source administration and development platform for PostgreSQL, the most advanced Open Source database in the world.
+  [Link to .yaml](https://raw.githubusercontent.com/oregapam/awesome-coolify-service-templates/refs/heads/main/templates/compose/pgadmin.yaml)
 
 
 ## How to Use
 
 1. Click on chosen service's `Link to .yaml` link copy the `.yaml` file content.
+Optional: Consider the notes (where available within the yaml files)
 2. Open your `Coolify Dashboard` in browser
 3. Go to `Projects`
 4. Select or create a project

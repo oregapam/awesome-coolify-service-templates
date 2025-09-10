@@ -1,0 +1,34 @@
+# documentation: https://www.pgadmin.org/docs/pgadmin4/latest/container_deployment.html
+# slogan: pgAdmin is the most popular and feature rich Open Source administration and development platform for PostgreSQL, the most advanced Open Source database in the world.
+# tags: database,postgresql,admin,web
+# port: 80
+# author: @oregapam
+# repository: https://github.com/oregapam/awesome-coolify-service-templates
+
+##########
+## Note ##
+##########
+
+# If you want to connect pgAdmin to a PostgreSQL database running in another container within
+# the same server which is managed by Coolify, you have to tick "Connect To Predefined Network".
+# After that you will be able to connect with "Postgres URL (internal)" credentials.
+
+services:
+  pgadmin:
+    image: 'dpage/pgadmin4:latest'
+    restart: always
+    environment:
+      - SERVICE_FQDN_PGADMIN
+      - PGADMIN_DEFAULT_EMAIL=${LOGIN_MAIL_ADDRESS:?}
+      - PGADMIN_DEFAULT_PASSWORD=${SERVICE_PASSWORD_ADMIN}
+    volumes:
+      - 'pgadmin-data:/var/lib/pgadmin'
+    healthcheck:
+      test: ["CMD", "wget", "-O", "-", "http://localhost:80/misc/ping"]
+      interval: 10s
+      timeout: 10s
+      start_period: 160s
+      retries: 3
+
+volumes:
+  pgadmin-data:
