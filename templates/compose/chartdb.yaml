@@ -1,0 +1,20 @@
+# documentation: https://docs.chartdb.io/docs/welcome
+# slogan: Database diagrams editor that allows you to visualize and design your DB with a single query.
+# tags: database,diagram,sql,visualization
+# port: 80
+# author: @oregapam
+# repository: https://github.com/oregapam/awesome-coolify-service-templates
+
+services:
+  chartdb:
+    image: ghcr.io/chartdb/chartdb:latest
+    restart: always
+    environment:
+      - SERVICE_FQDN_CHARTDB
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+    healthcheck:
+      test: ["CMD", "wget", "-O", "-", "http://localhost:80"]
+      interval: 10s
+      timeout: 10s
+      start_period: 20s
+      retries: 3
