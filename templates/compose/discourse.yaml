@@ -85,7 +85,7 @@ services:
     depends_on:
       - discourse
     volumes:
-      - 'sidekiq_data:/bitnami/discourse'
+      - 'discourse_data:/bitnami/discourse'
     command: /opt/bitnami/scripts/discourse-sidekiq/run.sh
     environment:
       # FQDN and port configuration
