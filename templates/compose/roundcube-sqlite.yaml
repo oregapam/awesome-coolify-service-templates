@@ -1,0 +1,37 @@
+# documentation: https://github.com/roundcube/roundcubemail-docker
+# slogan: The Roundcube Webmail suite
+# tags: web,email,imap,smtp,php,mysql,postgresql
+# port: 80
+# author: @oregapam
+# repository: https://github.com/oregapam/awesome-coolify-service-templates
+
+services:
+  roundcubemail:
+    image: roundcube/roundcubemail:latest
+    container_name: roundcubemail
+    restart: always
+    volumes:
+      - www:/var/www/html
+      - db:/var/roundcube/db
+    environment:
+      - SERVICE_FQDN_ROUNDCUBEMAIL_80
+      - ROUNDCUBEMAIL_DB_TYPE=sqlite
+      # tls:// (STARTTLS) or ssl:// (SSL/TLS)
+      - ROUNDCUBEMAIL_DEFAULT_HOST=${ROUNDCUBEMAIL_DEFAULT_HOST:-ssl://mail.example.com}
+      - ROUNDCUBEMAIL_DEFAULT_PORT=${ROUNDCUBEMAIL_DEFAULT_PORT:-993}
+      # tls:// (STARTTLS) or ssl:// (SSL/TLS)
+      - ROUNDCUBEMAIL_SMTP_SERVER=${ROUNDCUBEMAIL_SMTP_SERVER:-tls://mail.example.com}
+      - ROUNDCUBEMAIL_SMTP_PORT=${ROUNDCUBEMAIL_SMTP_PORT:-587}
+      # Optional settings
+      # - ROUNDCUBEMAIL_USERNAME_DOMAIN=${ROUNDCUBEMAIL_USERNAME_DOMAIN:?}
+      # - ROUNDCUBEMAIL_SKIN=${ROUNDCUBEMAIL_SKIN:-elastic}
+      # - ROUNDCUBEMAIL_UPLOAD_MAX_FILESIZE=${ROUNDCUBEMAIL_UPLOAD_MAX_FILESIZE:-5M}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+volumes:
+  www:
+  db:

@@ -34,6 +34,8 @@ Here are the currently available service templates:
   [Link to .yaml](https://raw.githubusercontent.com/oregapam/awesome-coolify-service-templates/refs/heads/main/templates/compose/pgadmin.yaml)
 - [ChartDB](https://github.com/chartdb/chartdb) - Database diagrams editor that allows you to visualize and design your DB with a single query.
   [Link to .yaml](https://raw.githubusercontent.com/oregapam/awesome-coolify-service-templates/refs/heads/main/templates/compose/chartdb.yaml)
+- [Roundcube](https://github.com/roundcube/roundcubemail-docker) - The Roundcube Webmail suite
+  [Link to .yaml (SQLite version)](https://raw.githubusercontent.com/oregapam/awesome-coolify-service-templates/refs/heads/main/templates/compose/roundcube-sqlite.yaml)
 
 
 ## How to Use
