@@ -14,7 +14,7 @@ services:
       - www:/var/www/html
       - db:/var/roundcube/db
     environment:
-      - SERVICE_FQDN_ROUNDCUBEMAIL_80
+      - SERVICE_URL_ROUNDCUBEMAIL_80
       - ROUNDCUBEMAIL_DB_TYPE=sqlite
       # tls:// (STARTTLS) or ssl:// (SSL/TLS)
       - ROUNDCUBEMAIL_DEFAULT_HOST=${ROUNDCUBEMAIL_DEFAULT_HOST:-ssl://mail.example.com}
