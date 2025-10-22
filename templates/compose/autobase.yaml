@@ -36,7 +36,7 @@ services:
       retries: 5
     restart: unless-stopped
     environment:
-      - SERVICE_FQDN_AUTOBASEUI_80
+      - SERVICE_URL_AUTOBASEUI_80
       - PG_CONSOLE_AUTHORIZATION_TOKEN=${SERVICE_PASSWORD_TOKEN}
       - PG_CONSOLE_API_HOST=autobase-console-api
 
