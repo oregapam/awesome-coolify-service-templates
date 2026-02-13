@@ -6,7 +6,6 @@
 # repository: https://github.com/oregapam/awesome-coolify-service-templates
 
 name: twenty
-
 services:
   server:
     image: twentycrm/twenty:latest
@@ -23,7 +22,6 @@ services:
       - DISABLE_CRON_JOBS_REGISTRATION=${DISABLE_CRON_JOBS_REGISTRATION}
       - APP_SECRET=${SERVICE_PASSWORD_SECRET}
       - IS_CONFIG_VARIABLES_IN_DB_ENABLED=${IS_CONFIG_VARIABLES_IN_DB_ENABLED:-true}
-
     depends_on:
       postgres:
         condition: service_healthy
@@ -35,7 +33,6 @@ services:
       timeout: 5s
       retries: 20
     restart: always
-
   worker:
     image: twentycrm/twenty:latest
     volumes:
@@ -49,14 +46,13 @@ services:
       - DISABLE_CRON_JOBS_REGISTRATION=${DISABLE_CRON_JOBS_REGISTRATION:-true}
       - APP_SECRET=${SERVICE_PASSWORD_SECRET}
       - IS_CONFIG_VARIABLES_IN_DB_ENABLED=${IS_CONFIG_VARIABLES_IN_DB_ENABLED:-true}
-
     depends_on:
       postgres:
         condition: service_healthy
       server:
         condition: service_healthy
     restart: always
-
+    exclude_from_hc: true
   postgres:
     image: 'postgres:16-alpine'
     environment:
@@ -73,7 +69,6 @@ services:
       interval: 5s
       timeout: 20s
       retries: 10
-
   redis:
     image: redis
     restart: always
