@@ -36,6 +36,8 @@ Here are the currently available service templates:
   [Link to .yaml](https://raw.githubusercontent.com/oregapam/awesome-coolify-service-templates/refs/heads/main/templates/compose/chartdb.yaml)
 - [Roundcube](https://github.com/roundcube/roundcubemail-docker) - The Roundcube Webmail suite
   [Link to .yaml (SQLite version)](https://raw.githubusercontent.com/oregapam/awesome-coolify-service-templates/refs/heads/main/templates/compose/roundcube-sqlite.yaml)
+- [twenty](https://github.com/twentyhq/twenty) - Building a modern alternative to Salesforce, powered by the community
+  [Link to .yaml](https://raw.githubusercontent.com/oregapam/awesome-coolify-service-templates/refs/heads/main/templates/compose/twentycrm.yaml)
 
 
 ## How to Use
