@@ -1,27 +1,47 @@
+# documentation: https://vikunja.io/docs/
+# slogan: The to-do app to organize your life.
+# tags: todo,task-management,productivity,open-source
+# port: 3456
+# author: @oregapam
+# repository: https://github.com/oregapam/awesome-coolify-service-templates
+
 services:
-  # 1. LÉPÉS: Jogosultságok javítása (Rootként fut le egyszer, majd kilép)
   init-permissions:
     image: alpine
     user: root
     restart: "no"
     volumes:
       - ./files:/mnt/files
-    # Létrehozza a mappát ha nem létezik, és beállítja az 1000-es UID-t
     command: sh -c "mkdir -p /mnt/files && chown -R 1000:1000 /mnt/files"
-
-  # 2. LÉPÉS: Az alkalmazás (Csak az init sikere után indul)
+    exclude_from_hc: true
   vikunja:
     image: vikunja/vikunja
     user: "1000:1000"
     environment:
+      # URL settings
       - SERVICE_FQDN_VIKUNJA_3456
       - VIKUNJA_SERVICE_PUBLICURL=${SERVICE_URL_VIKUNJA}
-      - VIKUNJA_DATABASE_HOST=db
-      - VIKUNJA_DATABASE_PASSWORD=${SERVICE_PASSWORD_POSTGRES}
+      # Databese settings
       - VIKUNJA_DATABASE_TYPE=postgres
+      - VIKUNJA_DATABASE_HOST=db
       - VIKUNJA_DATABASE_USER=${SERVICE_USER_POSTGRES}
+      - VIKUNJA_DATABASE_PASSWORD=${SERVICE_PASSWORD_POSTGRES}
       - VIKUNJA_DATABASE_DATABASE=${POSTGRES_DB:-vikunja}
+      # JWT secret
       - VIKUNJA_SERVICE_JWTSECRET=${SERVICE_PASSWORD_JWTSECRET}
+      # Timezone settings
+      - VIKUNJA_SERVICE_TIMEZONE=${VIKUNJA_SERVICE_TIMEZONE:-UTC}
+      - VIKUNJA_DEFAULTSETTINGS_TIMEZONE=${VIKUNJA_DEFAULTSETTINGS_TIMEZONE:-UTC}
+      # User settings
+      - VIKUNJA_SERVICE_ENABLEREGISTRATION=${VIKUNJA_SERVICE_ENABLEREGISTRATION:-true}
+      - VIKUNJA_AUTH_LOCAL_ENABLED=${VIKUNJA_AUTH_LOCAL_ENABLED:-true}
+      # Mail settings
+      - VIKUNJA_MAILER_ENABLED=${VIKUNJA_MAILER_ENABLED:-false}
+      - VIKUNJA_MAILER_HOST=${VIKUNJA_MAILER_HOST:-mail.example.com}
+      - VIKUNJA_MAILER_PORT=${VIKUNJA_MAILER_PORT:-587}
+      - VIKUNJA_MAILER_USERNAME=${VIKUNJA_MAILER_USERNAME:-username}
+      - VIKUNJA_MAILER_PASSWORD=${VIKUNJA_MAILER_PASSWORD:-password}
+      - VIKUNJA_MAILER_FROMEMAIL=${VIKUNJA_MAILER_FROMEMAIL:-noreply@example.com}
     volumes:
       - ./files:/app/vikunja/files
       - type: bind
@@ -29,15 +49,18 @@ services:
         target: /etc/vikunja/config.yml
         content: |
           ---
-          # Empty config
+          # Vikunja configuration file, these settings will override environment variables!
+          # For more details see: https://vikunja.io/docs/config-options/
+          #
+          # OpenID Connect provider configuration can be set only here!
+          # Example configs: https://vikunja.io/docs/openid-example-configurations/
     depends_on:
       db:
         condition: service_healthy
       init-permissions:
         condition: service_completed_successfully
     restart: unless-stopped
-
-  # 3. LÉPÉS: Az adatbázis
+    exclude_from_hc: true
   db:
     image: paradedb/paradedb:latest
     environment:
