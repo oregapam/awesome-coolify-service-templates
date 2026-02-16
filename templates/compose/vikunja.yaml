@@ -1,0 +1,55 @@
+services:
+  # 1. LÉPÉS: Jogosultságok javítása (Rootként fut le egyszer, majd kilép)
+  init-permissions:
+    image: alpine
+    user: root
+    restart: "no"
+    volumes:
+      - ./files:/mnt/files
+    # Létrehozza a mappát ha nem létezik, és beállítja az 1000-es UID-t
+    command: sh -c "mkdir -p /mnt/files && chown -R 1000:1000 /mnt/files"
+
+  # 2. LÉPÉS: Az alkalmazás (Csak az init sikere után indul)
+  vikunja:
+    image: vikunja/vikunja
+    user: "1000:1000"
+    environment:
+      - SERVICE_FQDN_VIKUNJA_3456
+      - VIKUNJA_SERVICE_PUBLICURL=${SERVICE_URL_VIKUNJA}
+      - VIKUNJA_DATABASE_HOST=db
+      - VIKUNJA_DATABASE_PASSWORD=${SERVICE_PASSWORD_POSTGRES}
+      - VIKUNJA_DATABASE_TYPE=postgres
+      - VIKUNJA_DATABASE_USER=${SERVICE_USER_POSTGRES}
+      - VIKUNJA_DATABASE_DATABASE=${POSTGRES_DB:-vikunja}
+      - VIKUNJA_SERVICE_JWTSECRET=${SERVICE_PASSWORD_JWTSECRET}
+    volumes:
+      - ./files:/app/vikunja/files
+      - type: bind
+        source: ./config.yml
+        target: /etc/vikunja/config.yml
+        content: |
+          ---
+          # Empty config
+    depends_on:
+      db:
+        condition: service_healthy
+      init-permissions:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+  # 3. LÉPÉS: Az adatbázis
+  db:
+    image: paradedb/paradedb:latest
+    environment:
+      POSTGRES_PASSWORD: ${SERVICE_PASSWORD_POSTGRES}
+      POSTGRES_USER: ${SERVICE_USER_POSTGRES}
+      POSTGRES_DB: ${POSTGRES_DB:-vikunja}
+    volumes:
+      - db:/var/lib/postgresql
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h localhost -U ${SERVICE_USER_POSTGRES} -d ${POSTGRES_DB:-vikunja}"]
+      interval: 2s
+      start_period: 30s
+volumes:
+  db:
