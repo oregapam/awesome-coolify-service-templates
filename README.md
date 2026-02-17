@@ -38,6 +38,8 @@ Here are the currently available service templates:
   [Link to .yaml (SQLite version)](https://raw.githubusercontent.com/oregapam/awesome-coolify-service-templates/refs/heads/main/templates/compose/roundcube-sqlite.yaml)
 - [twenty](https://github.com/twentyhq/twenty) - Building a modern alternative to Salesforce, powered by the community
   [Link to .yaml](https://raw.githubusercontent.com/oregapam/awesome-coolify-service-templates/refs/heads/main/templates/compose/twentycrm.yaml)
+- [QuackBack](https://github.com/QuackbackIO/quackback) - Open-source customer feedback platform. Collect, organize, and act on user feedback.
+  [Link to .yaml](https://raw.githubusercontent.com/oregapam/awesome-coolify-service-templates/refs/heads/main/templates/compose/quackback.yaml)
 
 
 ## How to Use

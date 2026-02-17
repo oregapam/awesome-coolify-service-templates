@@ -1,0 +1,113 @@
+# documentation: https://docs.quackback.io/
+# slogan: Open-source customer feedback platform. Collect, organize, and act on user feedback.
+# tags: feedback,product-management,open-source,selfhosted
+# port: 3000
+# author: @oregapam
+# repository: https://github.com/oregapam/awesome-coolify-service-templates
+
+services:
+  quackback:
+    image: ghcr.io/quackbackio/quackback:latest
+    restart: always
+    environment:
+      - SERVICE_FQDN_QUACKBACK_3000
+      - DATABASE_URL=postgresql://${SERVICE_USER_POSTGRES}:${SERVICE_PASSWORD_POSTGRES}@postgres:5432/${POSTGRES_DB:-quackback}
+      - SECRET_KEY=${SERVICE_BASE64_64_SECRET}
+      - BASE_URL=${SERVICE_FQDN_QUACKBACK}
+      - REDIS_URL=redis://dragonfly:6379
+      - PORT=3000
+      - NODE_ENV=production
+      # S3/MinIO Object Storage (for file uploads)
+      - S3_ENDPOINT=http://minio:9000
+      - S3_BUCKET=${S3_BUCKET:-quackback}
+      - S3_REGION=${S3_REGION:-us-east-1}
+      - S3_ACCESS_KEY_ID=${SERVICE_USER_MINIO}
+      - S3_SECRET_ACCESS_KEY=${SERVICE_PASSWORD_MINIO}
+      - S3_FORCE_PATH_STYLE=true
+      - S3_PROXY=true
+      # Optional: Email via SMTP
+      # - EMAIL_SMTP_HOST=${EMAIL_SMTP_HOST}
+      # - EMAIL_SMTP_PORT=${EMAIL_SMTP_PORT:-587}
+      # - EMAIL_SMTP_USER=${EMAIL_SMTP_USER}
+      # - EMAIL_SMTP_PASS=${EMAIL_SMTP_PASS}
+      # - EMAIL_FROM=${EMAIL_FROM}
+      # Optional: Email via Resend
+      # - EMAIL_RESEND_API_KEY=${EMAIL_RESEND_API_KEY}
+      # Optional: AI auto-categorization
+      # - OPENAI_API_KEY=${OPENAI_API_KEY}
+      # - OPENAI_BASE_URL=${OPENAI_BASE_URL}
+      # Optional: Disable telemetry
+      # - DISABLE_TELEMETRY=true
+    depends_on:
+      postgres:
+        condition: service_healthy
+      dragonfly:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+      start_period: 30s
+
+  postgres:
+    image: pgvector/pgvector:pg17
+    restart: always
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=${SERVICE_USER_POSTGRES}
+      - POSTGRES_PASSWORD=${SERVICE_PASSWORD_POSTGRES}
+      - POSTGRES_DB=${POSTGRES_DB:-quackback}
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - 'pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}'
+      interval: 5s
+      timeout: 20s
+      retries: 10
+
+  dragonfly:
+    image: docker.dragonflydb.io/dragonflydb/dragonfly:v1.27.1
+    restart: always
+    command: ["--cluster_mode=emulated", "--lock_on_hashtags"]
+    volumes:
+      - dragonfly-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  minio:
+    image: minio/minio
+    restart: always
+    command: server /data --console-address :9001
+    volumes:
+      - minio-data:/data
+    environment:
+      - MINIO_ROOT_USER=${SERVICE_USER_MINIO}
+      - MINIO_ROOT_PASSWORD=${SERVICE_PASSWORD_MINIO}
+
+  minio-init:
+    image: minio/mc
+    depends_on:
+      - minio
+    environment:
+      - MINIO_ROOT_USER=${SERVICE_USER_MINIO}
+      - MINIO_ROOT_PASSWORD=${SERVICE_PASSWORD_MINIO}
+      - S3_BUCKET=${S3_BUCKET:-quackback}
+    entrypoint: >
+      /bin/sh -c "
+      sleep 5;
+      mc alias set quackback http://minio:9000 $${MINIO_ROOT_USER} $${MINIO_ROOT_PASSWORD};
+      mc mb quackback/$${S3_BUCKET} --ignore-existing;
+      mc anonymous set download quackback/$${S3_BUCKET};
+      exit 0;
+      "
+    exclude_from_hc: true
+
+volumes:
+  db-data:
+  dragonfly-data:
+  minio-data:
