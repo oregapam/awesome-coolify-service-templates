@@ -38,7 +38,8 @@ Here are the currently available service templates:
   [Link to .yaml (SQLite version)](https://raw.githubusercontent.com/oregapam/awesome-coolify-service-templates/refs/heads/main/templates/compose/roundcube-sqlite.yaml)
 - [twenty](https://github.com/twentyhq/twenty) - Building a modern alternative to Salesforce, powered by the community
   [Link to .yaml](https://raw.githubusercontent.com/oregapam/awesome-coolify-service-templates/refs/heads/main/templates/compose/twentycrm.yaml)
-
+- [Vikunja](https://github.com/go-vikunja/vikunja) - The to-do app to organize your life.
+  [Link to .yaml (ParadeDB version)](https://raw.githubusercontent.com/oregapam/awesome-coolify-service-templates/refs/heads/main/templates/compose/vikunja.yaml)
 
 ## How to Use
 
