@@ -40,6 +40,8 @@ Here are the currently available service templates:
   [Link to .yaml](https://raw.githubusercontent.com/oregapam/awesome-coolify-service-templates/refs/heads/main/templates/compose/twentycrm.yaml)
 - [Vikunja](https://github.com/go-vikunja/vikunja) - The to-do app to organize your life.
   [Link to .yaml (ParadeDB version)](https://raw.githubusercontent.com/oregapam/awesome-coolify-service-templates/refs/heads/main/templates/compose/vikunja.yaml)
+- [Moodle](https://github.com/moodle/moodle) - Moodle - the world's open source learning platform (Thank You PikaPods for your work!)
+  [Link to .yaml (MariaDB version)](https://raw.githubusercontent.com/oregapam/awesome-coolify-service-templates/refs/heads/main/templates/compose/moodle-mariadb.yaml)
 
 ## How to Use
 

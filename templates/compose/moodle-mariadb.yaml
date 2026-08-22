@@ -1,0 +1,72 @@
+# documentation: https://github.com/pikapods/docker-moodle
+# slogan: Moodle - the world's open source learning platform
+# tags: education,learning-management-system,lms,open-source
+# port: 3456
+# author: @oregapam
+# repository: https://github.com/oregapam/awesome-coolify-service-templates
+
+name: moodle
+
+services:
+  mariadb:
+    image: mariadb:11 # 10.11+ is Moodle 5.2 minimum; 11 is current LTS
+    environment:
+      - 'MARIADB_DATABASE=${MARIADB_DATABASE:-moodle}'
+      - 'MARIADB_USER=${SERVICE_USER_MARIADB}'
+      - 'MARIADB_PASSWORD=${SERVICE_PASSWORD_MARIADB}'
+      - 'MARIADB_RANDOM_ROOT_PASSWORD="yes"'
+    command:
+      # utf8mb4 must be the *server* default (not just the connection charset)
+      # for Moodle's MariaDB checks to pass. innodb-file-per-table=ON is
+      # required by check_mysql_file_format / check_mysql_large_prefix.
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --innodb-file-per-table=ON
+      - --skip-character-set-client-handshake
+    volumes:
+      - mariadb-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 3s
+      retries: 24 # MariaDB cold start is slower than postgres
+      start_period: 20s
+    restart: unless-stopped
+
+  moodle:
+    image: ${MOODLE_IMAGE:-ghcr.io/pikapods/docker-moodle:latest}
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    environment:
+      # URL settings
+      - SERVICE_FQDN_MOODLE_8080
+      - 'MOODLE_URL=${SERVICE_URL_MOODLE}'
+      - 'MOODLE_CFG_SSLPROXY=true'
+      # Database settings
+      - 'DB_TYPE=mariadb'
+      - 'DB_HOST=mariadb'
+      - 'DB_NAME=${MARIADB_DATABASE:-moodle}'
+      - 'DB_USER=${SERVICE_USER_MARIADB}'
+      - 'DB_PASS=${SERVICE_PASSWORD_MARIADB}'
+      - 'DB_PREFIX=${DB_PREFIX:-mdl_}'
+      # First seed settings (only used on first run)
+      - 'ADMIN_USER=${SERVICE_USER_MARIADB}'
+      - 'ADMIN_PASS=${SERVICE_PASSWORD_MOODLE}'
+      - 'ADMIN_EMAIL=${ADMIN_EMAIL:-admin@example.com}'
+      - 'SITE_FULLNAME=${SITE_FULLNAME:-Moodle Demo}'
+      - 'SITE_SHORTNAME=${SITE_SHORTNAME:-moodle}'
+      - 'MOODLE_LANG=${MOODLE_LANG:-en}'
+      # CRON settings
+      - 'ENABLE_MOODLE_CRON=${ENABLE_MOODLE_CRON:-TRUE}'
+      - 'ENABLE_MOODLE_ADHOC=${ENABLE_MOODLE_ADHOC:-TRUE}'
+      # Plugin settings
+      - 'ENABLE_PLUGIN_SYNC=${ENABLE_PLUGIN_SYNC:-TRUE}'
+      - 'PLUGIN_SYNC_INTERVAL=${PLUGIN_SYNC_INTERVAL:-60}'
+    volumes:
+      - moodle-data:/data
+    restart: unless-stopped
+
+volumes:
+  mariadb-data:
+  moodle-data:
