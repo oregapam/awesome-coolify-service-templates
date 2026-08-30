@@ -6,6 +6,8 @@ Welcome to my Coolify Service Templates repository! This repo contains Docker Co
 
 Here are the currently available service templates:
 
+- [systemprompt](https://github.com/systempromptio/systemprompt-template) - Self-hosted AI governance gateway for Claude, OpenAI, and Gemini: policy checks, audit trails, rate limits, and MCP orchestration on every call.
+  [Link to .yaml](https://raw.githubusercontent.com/oregapam/awesome-coolify-service-templates/refs/heads/main/templates/compose/systemprompt.yaml)
 - [Planka](https://github.com/plankanban/planka) - The realtime kanban board for workgroups built with React and Redux.
   [Link to .yaml](https://raw.githubusercontent.com/oregapam/awesome-coolify-service-templates/refs/heads/main/templates/compose/planka.yaml)
 - [Linkwarden](https://github.com/linkwarden/linkwarden) - Self-hosted collaborative bookmark manager to collect, organize, and preserve webpages, articles, and documents.
