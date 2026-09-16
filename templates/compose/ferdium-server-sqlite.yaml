@@ -14,7 +14,7 @@ services:
       - SERVICE_FQDN_FERDIUM_3333
       - APP_URL=${SERVICE_URL_FERDIUM}
       # Environment settings (can be development, production)
-      - NODE_ENV=production
+      - NODE_ENV=${NODE_ENV:-production}
       # Database settings
       # Database type (can be MariaDB/MySQL (mysql), PostgreSQL (pg), SQLite (sqlite))
       - DB_CONNECTION=${DB_CONNECTION:-sqlite}
