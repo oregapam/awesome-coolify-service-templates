@@ -42,6 +42,8 @@ Here are the currently available service templates:
   [Link to .yaml (ParadeDB version)](https://raw.githubusercontent.com/oregapam/awesome-coolify-service-templates/refs/heads/main/templates/compose/vikunja.yaml)
 - [Moodle](https://github.com/moodle/moodle) - Moodle - the world's open source learning platform (Thank You PikaPods for your work!)
   [Link to .yaml (MariaDB version)](https://raw.githubusercontent.com/oregapam/awesome-coolify-service-templates/refs/heads/main/templates/compose/moodle-mariadb.yaml)
+- [Ferdium Server](https://github.com/ferdium/ferdium-server) - The server component that can either be self-hosted or hosted for general purpose - for use with the ferdium thick client.
+  [Link to .yaml (SQLite version)](https://raw.githubusercontent.com/oregapam/awesome-coolify-service-templates/refs/heads/main/templates/compose/ferdium-server-sqlite.yaml)
 
 ## How to Use
 
